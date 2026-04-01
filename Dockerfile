@@ -1,28 +1,36 @@
-# --- Usamos Node 18 Slim (Basado en Debian, mucho más compatible) ---
-FROM node:18-slim
-# Instalamos solo lo mínimo necesario de sistema
+# --- Usamos Node 20 (LTS) para mejor compatibilidad con Tailwind ---
+FROM node:20-slim
+
+# Instalamos herramientas de compilación necesarias para módulos nativos
 RUN apt-get update && apt-get install -y \
     python3 \
     make \
     g++ \
     gcc \
     && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
-# Copiamos solo los package.json (Ignoramos los locks que vienen de Windows)
+
+# Copiamos solo los manifiestos
 COPY package.json ./
 COPY extensions/sample/package.json ./extensions/sample/
-# Instalamos desde cero (Esto bajará los binarios nativos correctos para Linux)
-RUN npm install
-# Copiamos el código fuente
+
+# Limpiamos caché de npm y forzamos instalación limpia para Linux
+RUN npm cache clean --force
+RUN npm install --include=optional --no-package-lock
+
+# Copiamos el resto del código (ignora node_modules por el .dockerignore)
 COPY . .
-# Paso 1: Compilar la extensión
+
+# Compilamos la extensión
 WORKDIR /app/extensions/sample
 RUN npm run tsc
-# Paso 2: Construir EverShop (Esta vez el build DEBE terminar sin errores)
+
+# Volvemos al root y construimos EverShop
 WORKDIR /app
 RUN npm run build
-# Configuramos el entorno de producción
+
 ENV NODE_ENV=production
 EXPOSE 3000
-# Arrancamos la tienda
+
 CMD ["npm", "run", "start"]
