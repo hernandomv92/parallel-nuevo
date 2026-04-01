@@ -10,7 +10,7 @@ services:
     volumes:
       - paralel-db-data:/var/lib/postgresql/data
     networks:
-      - paralel-network
+      - easypanel
     deploy:
       resources:
         limits:
