@@ -5,3 +5,10 @@ node_modules/
 *.log
 .codex-*
 media/
+dist/
+.DS_Store
+Thumbs.db
+extensions/*/node_modules/
+extensions/*/dist/
+themes/*/node_modules/
+themes/*/dist/
