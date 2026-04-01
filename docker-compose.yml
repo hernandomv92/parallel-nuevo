@@ -19,7 +19,9 @@ services:
           memory: 128M
 
   paralel-store-app:
-    image: ghcr.io/hernandomv92/parallel-nuevo/app:master
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: paralel-store-app
     restart: unless-stopped
     environment:

@@ -8,10 +8,10 @@ RUN apt-get update && apt-get install -y \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
-# Copiamos archivos de dependencias
-COPY package*.json ./
-COPY extensions/sample/package*.json ./extensions/sample/
-# Instalamos todo (npm install en Debian suele ser más estable para nativos)
+# Copiamos solo los package.json (Ignoramos los locks que vienen de Windows)
+COPY package.json ./
+COPY extensions/sample/package.json ./extensions/sample/
+# Instalamos desde cero (Esto bajará los binarios nativos correctos para Linux)
 RUN npm install
 # Copiamos el código fuente
 COPY . .
