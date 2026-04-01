@@ -1,0 +1,63 @@
+services:
+  paralel-store-db:
+    image: postgres:16-alpine
+    container_name: paralel-store-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: paralel
+      POSTGRES_DB: paralel_store
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - paralel-db-data:/var/lib/postgresql/data
+    networks:
+      - easypanel
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 128M
+
+  paralel-store-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: paralel-store-app
+    restart: unless-stopped
+    environment:
+      - DB_HOST=paralel-store-db
+      - DB_PORT=5432
+      - DB_USER=paralel
+      - DB_PASSWORD=${POSTGRES_PASSWORD}
+      - DB_NAME=paralel_store
+      - DB_SSLMODE=disable
+      - NODE_ENV=production
+    depends_on:
+      - paralel-store-db
+    networks:
+      - easypanel
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.paralel-store.rule=Host(`paralel.store`) || Host(`www.paralel.store`)"
+      - "traefik.http.routers.paralel-store.entrypoints=https"
+      - "traefik.http.routers.paralel-store.tls=true"
+      - "traefik.http.routers.paralel-store.tls.certresolver=letsencrypt"
+      - "traefik.http.services.paralel-store.loadbalancer.server.port=3000"
+      - "traefik.http.routers.paralel-store.middlewares=paralel-www-redireccion"
+      - "traefik.http.middlewares.paralel-www-redireccion.redirectregex.regex=^https?://www.paralel.store/(.*)"
+      - "traefik.http.middlewares.paralel-www-redireccion.redirectregex.replacement=https://paralel.store/$${1}"
+      - "traefik.http.middlewares.paralel-www-redireccion.redirectregex.permanent=true"
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+        reservations:
+          memory: 512M
+
+networks:
+  easypanel:
+    external: true
+
+volumes:
+  paralel-db-data:

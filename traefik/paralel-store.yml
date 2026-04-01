@@ -1,0 +1,30 @@
+# Configuración de Traefik para EverShop en Easypanel
+# Destino en VPS: /etc/easypanel/traefik/config/paralel-store.yml
+
+http:
+  routers:
+    # Router principal para el dominio root y www
+    paralel-store:
+      rule: "Host(`paralel.store`) || Host(`www.paralel.store`)"
+      entryPoints:
+        - websecure
+      service: paralel-store-service
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - paralel-redirect-www
+
+  services:
+    # Servicio que apunta al contenedor de Docker
+    paralel-store-service:
+      loadBalancer:
+        servers:
+          - url: "http://paralel-store-app:3000"
+
+  middlewares:
+    # Redirigir www.paralel.store a paralel.store (SEO friendly)
+    paralel-redirect-www:
+      redirectRegex:
+        regex: "^https?://www.paralel.store/(.*)"
+        replacement: "https://paralel.store/${1}"
+        permanent: true

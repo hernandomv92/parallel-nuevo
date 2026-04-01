@@ -1,0 +1,111 @@
+import { Button } from '@evershop/evershop/components/common/ui/Button';
+import {
+  useCheckout,
+  useCheckoutDispatch
+} from '../../../../../../node_modules/@evershop/evershop/dist/components/frontStore/checkout/CheckoutContext.js';
+import { _ } from '@evershop/evershop/lib/locale/translate/_';
+import React, { useEffect } from 'react';
+import { toast } from 'react-toastify';
+
+interface BoldRedirectMethodProps {
+  boldRedirectUrl: string;
+  setting: {
+    boldDisplayName: string;
+  };
+}
+
+function BoldLogo() {
+  return (
+    <span className="inline-flex items-center rounded-full bg-[#ff6b00] px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-white">
+      Bold
+    </span>
+  );
+}
+
+export default function BoldRedirectMethod({
+  boldRedirectUrl,
+  setting: { boldDisplayName }
+}: BoldRedirectMethodProps) {
+  const {
+    orderPlaced,
+    orderId,
+    checkoutData: { paymentMethod }
+  } = useCheckout();
+  const { registerPaymentComponent } = useCheckoutDispatch();
+
+  useEffect(() => {
+    if (orderPlaced && orderId && paymentMethod === 'bold_redirect') {
+      window.location.href = `${boldRedirectUrl}?order_id=${encodeURIComponent(
+        orderId
+      )}`;
+    }
+  }, [boldRedirectUrl, orderPlaced, orderId, paymentMethod]);
+
+  useEffect(() => {
+    registerPaymentComponent('bold_redirect', {
+      nameRenderer: () => (
+        <div className="flex w-full items-center justify-between">
+          <span>{boldDisplayName}</span>
+          <BoldLogo />
+        </div>
+      ),
+      formRenderer: () => (
+        <div className="flex justify-center text-muted-foreground">
+          <div className="w-2/3 py-3 text-center">
+            {_(
+              'Serás redirigido a Bold para completar el pago de forma segura.'
+            )}
+          </div>
+        </div>
+      ),
+      checkoutButtonRenderer: () => {
+        const { checkout } = useCheckoutDispatch();
+        const { loadingStates, orderPlaced } = useCheckout();
+
+        const handleClick = async (e: React.MouseEvent) => {
+          e.preventDefault();
+          try {
+            await checkout();
+          } catch (error) {
+            toast.error(_('No se pudo preparar la orden para Bold.'));
+          }
+        };
+
+        const isDisabled = loadingStates.placingOrder || orderPlaced;
+
+        return (
+          <Button
+            variant="default"
+            size="xl"
+            type="button"
+            onClick={handleClick}
+            disabled={isDisabled}
+            className="w-full bg-[#ff6b00] text-white transition-colors duration-200 hover:bg-[#e45f00] disabled:cursor-not-allowed disabled:bg-[#ff6b00]"
+          >
+            {loadingStates.placingOrder
+              ? _('Preparando pago en Bold...')
+              : orderPlaced
+                ? _('Redirigiendo a Bold...')
+                : _('Continuar a Bold')}
+          </Button>
+        );
+      }
+    });
+  }, [boldDisplayName, registerPaymentComponent]);
+
+  return null;
+}
+
+export const layout = {
+  areaId: 'checkoutForm',
+  sortOrder: 12
+};
+
+export const query = `
+  query Query {
+    setting {
+      boldDisplayName
+    }
+    boldRedirectUrl: url(routeId: "boldRedirect")
+  }
+`;

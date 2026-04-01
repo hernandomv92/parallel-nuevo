@@ -1,0 +1,5 @@
+{
+  "methods": ["POST"],
+  "path": "/bold/button-payload",
+  "access": "public"
+}

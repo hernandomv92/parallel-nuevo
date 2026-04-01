@@ -1,0 +1,17 @@
+{
+  "shop": {
+    "language": "es",
+    "currency": "COP",
+    "timezone": "America/Bogota"
+  },
+  "system": {
+    "extensions": [
+      {
+        "name": "sample",
+        "resolve": "extensions/sample",
+        "enabled": true
+      }
+    ],
+    "theme": "sample"
+  }
+}
