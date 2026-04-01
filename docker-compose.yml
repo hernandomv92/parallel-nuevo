@@ -10,7 +10,7 @@ services:
     volumes:
       - paralel-db-data:/var/lib/postgresql/data
     networks:
-      - easypanel
+      - paralel-network
     deploy:
       resources:
         limits:
@@ -43,10 +43,6 @@ services:
       - "traefik.http.routers.paralel-store.tls=true"
       - "traefik.http.routers.paralel-store.tls.certresolver=letsencrypt"
       - "traefik.http.services.paralel-store.loadbalancer.server.port=3000"
-      - "traefik.http.routers.paralel-store.middlewares=paralel-www-redireccion"
-      - "traefik.http.middlewares.paralel-www-redireccion.redirectregex.regex=^https?://www.paralel.store/(.*)"
-      - "traefik.http.middlewares.paralel-www-redireccion.redirectregex.replacement=https://paralel.store/$${1}"
-      - "traefik.http.middlewares.paralel-www-redireccion.redirectregex.permanent=true"
     deploy:
       resources:
         limits:
