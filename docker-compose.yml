@@ -39,11 +39,11 @@ services:
       - easypanel
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.paralel-store.rule=Host(`paralel.store`) || Host(`www.paralel.store`)"
-      - "traefik.http.routers.paralel-store.entrypoints=https"
-      - "traefik.http.routers.paralel-store.tls=true"
-      - "traefik.http.routers.paralel-store.tls.certresolver=letsencrypt"
-      - "traefik.http.services.paralel-store.loadbalancer.server.port=3000"
+      - "traefik.http.routers.paralel-store-v2.rule=Host(`paralel.store`) || Host(`www.paralel.store`)"
+      - "traefik.http.routers.paralel-store-v2.entrypoints=https"
+      - "traefik.http.routers.paralel-store-v2.tls=true"
+      - "traefik.http.routers.paralel-store-v2.tls.certresolver=letsencrypt"
+      - "traefik.http.services.paralel-store-v2.loadbalancer.server.port=3000"
     deploy:
       resources:
         limits:
