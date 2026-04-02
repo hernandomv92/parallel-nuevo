@@ -1,5 +1,6 @@
 {
   "shop": {
+    "url": "https://paralel.store",
     "language": "es",
     "currency": "COP",
     "timezone": "America/Bogota"
