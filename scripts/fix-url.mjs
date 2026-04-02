@@ -1,4 +1,15 @@
-import { pool } from '@evershop/evershop/src/lib/postgres/connection.js';
+import pkg from 'pg';
+const { Pool } = pkg;
+
+// Use default Evershop database environment variables
+const pool = new Pool({
+  host: process.env.DB_HOST || 'paralel-store-db',
+  port: process.env.DB_PORT || 5432,
+  user: process.env.DB_USER || 'paralel',
+  password: process.env.DB_PASSWORD || 'paralel123',
+  database: process.env.DB_NAME || 'paralel_store',
+});
+
 import { execute } from '@evershop/postgres-query-builder';
 
 async function fixStoreUrl() {
