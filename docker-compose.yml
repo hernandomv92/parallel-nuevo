@@ -32,6 +32,7 @@ services:
       - DB_NAME=paralel_store
       - DB_SSLMODE=disable
       - NODE_ENV=production
+      - URL=https://paralel.store
     depends_on:
       - paralel-store-db
     networks:
