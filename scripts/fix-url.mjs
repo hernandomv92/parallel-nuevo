@@ -10,8 +10,6 @@ const pool = new Pool({
   database: process.env.DB_NAME || 'paralel_store',
 });
 
-import { execute } from '@evershop/postgres-query-builder';
-
 async function fixStoreUrl() {
   const correctUrl = 'https://paralel.store';
   
@@ -19,10 +17,7 @@ async function fixStoreUrl() {
     console.log('Intentando verificar y corregir la URL de la tienda en la base de datos...');
     
     // Check if the setting exists
-    const result = await execute(
-      pool,
-      `SELECT * FROM setting WHERE name = 'shopConfig'`
-    );
+    const result = await pool.query(`SELECT * FROM setting WHERE name = 'shopConfig'`);
 
     let found = false;
     let currentValue = null;
@@ -45,8 +40,7 @@ async function fixStoreUrl() {
       if (parsedValue.storeUrl !== correctUrl) {
         parsedValue.storeUrl = correctUrl;
         
-        await execute(
-          pool,
+        await pool.query(
           `UPDATE setting SET value = $1 WHERE name = 'shopConfig'`,
           [JSON.stringify(parsedValue)]
         );
@@ -56,8 +50,7 @@ async function fixStoreUrl() {
       }
     } else {
       console.log('No se encontró configuración shopConfig en la DB. Creándola...');
-      await execute(
-        pool,
+      await pool.query(
         `INSERT INTO setting (name, value, is_json) VALUES ('shopConfig', $1, true)`,
         [JSON.stringify({ storeUrl: correctUrl })]
       );
