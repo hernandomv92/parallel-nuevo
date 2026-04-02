@@ -5,8 +5,8 @@
   "private": true,
   "scripts": {
     "setup": "evershop install",
-    "start": "URL=https://paralel.store NODE_ENV=production evershop start",
-    "build": "URL=https://paralel.store NODE_ENV=production evershop build",
+    "start": "evershop start",
+    "build": "evershop build",
     "dev": "evershop dev",
     "dev:direct": "node node_modules/@evershop/evershop/dist/bin/dev/init.js"
   },
