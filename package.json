@@ -8,7 +8,9 @@
     "start": "evershop start",
     "build": "evershop build",
     "dev": "evershop dev",
-    "dev:direct": "node node_modules/@evershop/evershop/dist/bin/dev/init.js"
+    "dev:direct": "node node_modules/@evershop/evershop/dist/bin/dev/init.js",
+    "user:create": "evershop user:create",
+    "user:changePassword": "evershop user:changePassword"
   },
   "dependencies": {
     "@evershop/evershop": "2.1.1"
